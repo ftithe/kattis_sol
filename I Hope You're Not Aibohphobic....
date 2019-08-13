@@ -1,0 +1,56 @@
+#include<iostream>
+#include<cstring>
+#include<vector>
+
+using namespace std;
+
+int main () {
+
+        string word, line;
+        char left_c, right_c;
+
+        getline(cin, line);
+        word = line;
+
+        if (word.size() == 1) {
+                cout << "PALINDROME" << endl;
+        }
+        else if (word.size() == 2) {
+                if (word[0] == word[1]) {
+                        cout << "PALINDROME" << endl;
+                }
+                else {
+                        cout << "NOT PALINDROME" << endl;
+                }
+        }
+        else {
+                do {
+                        left_c = word[0];
+                        right_c = word[word.size() - 1];
+                        if (word.size() <= 2)
+                                break;
+                        word = word.substr(1, word.size() - 2);
+
+                } while(left_c == right_c);
+
+                if (left_c != right_c) {
+                        cout << "NOT PALINDROME" << endl;
+                }
+                else {
+                        if (word.size() == 2) {
+                                if (word[0] == word[1]) {
+                                        cout << "PALINDROME" << endl;
+                                }
+                                else {
+                                        cout << "NOT PALINDROME" << endl;
+                                }
+                        }
+                        else {
+                                cout << "PALINDROME" << endl;
+                        }
+                }
+        }
+
+        return 0;
+
+}
