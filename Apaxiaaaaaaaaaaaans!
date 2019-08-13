@@ -13,10 +13,6 @@ int main () {
     cin >> name;
     
     for (i = 0; i < name.size(); i++) {
-        
-    }
-    
-    for (i = 0; i < name.size(); i++) {
         frequency = count(name.begin() + i, name.end(), name[i]);
         if (frequency > 1) {
             j = 1;
