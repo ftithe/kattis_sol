@@ -1,0 +1,114 @@
+#include<iostream>
+#include<vector>
+#include<sstream>
+#include<cstdlib>
+#include<algorithm>
+
+using namespace std;
+
+struct coordinate {
+    vector<int> xy;
+    char flag;
+    
+    coordinate () : flag ('f') {
+    }
+};
+
+int point (vector<coordinate> &, int, int);
+int manhattan_distance (vector<coordinate> , int, int);
+int sunk_ships (vector<coordinate> );
+
+int main () {
+    
+    int N, M, S, R;
+    
+    cin >> N >> M >> S >> R;
+    
+    int i;
+    vector<int> xy;
+    vector<vector<int> > shots_coord;
+    vector<coordinate> ship;
+    coordinate ship_coord;
+    string line;
+    
+    cin.ignore();
+    i = 0;
+    while (i < S) {
+        getline(cin, line);
+        stringstream str_st(line);
+        while (getline(str_st, line, ' ')) {
+            ship_coord.xy.push_back(atoi(line.c_str()));
+        }
+        ship.push_back(ship_coord);
+        ship_coord.xy.clear();
+        i++;
+    }
+    
+    i = 0;
+    while (i < R) {
+        getline(cin, line);
+        stringstream str_st(line);
+        while (getline(str_st, line, ' ')) {
+            xy.push_back(atoi(line.c_str()));
+        }
+        shots_coord.push_back(xy);
+        xy.clear();
+        i++;
+    }
+    
+    int points;
+    points = 0;
+    
+    for (i = 0; i < shots_coord.size(); i++) {
+        points += point(ship, shots_coord[i][0], shots_coord[i][1]);
+    }
+    
+    int H;
+    
+    H = sunk_ships(ship);
+    
+    cout << H << "/" << S << " ships sunk. Score: " << points << " points"<<endl;
+    
+    
+    return 0;
+}
+
+int point (vector<coordinate> &ship, int x, int y) {
+    for (int i = 0; i < ship.size(); i++) {
+        if (ship[i].xy[0] == x && ship[i].xy[1] == y) {
+            if (ship[i].flag == 'f') {
+                ship[i].flag = 's';
+                return 1000;
+            }
+            else {
+                break;
+            }
+        }
+    }
+    
+    return max(0, 1000 - manhattan_distance(ship, x, y) * 100);
+}
+
+int manhattan_distance (vector<coordinate> ship, int x, int y) {
+    int D;
+    vector<int> distance;
+    for (int i = 0; i < ship.size(); i++) {
+        if (ship[i].flag == 'f') {
+            D = abs(ship[i].xy[0] - x) + abs(ship[i].xy[1] - y);
+            distance.push_back(D);
+        }
+    }
+    sort(distance.begin(), distance.end());
+    return distance[0];
+}
+
+int sunk_ships (vector<coordinate> ship) {
+    int n_sunk;
+    n_sunk = 0;
+    for (int i = 0; i < ship.size(); i++) {
+        if (ship[i].flag == 's') {
+            n_sunk++;
+        }
+    }
+    return n_sunk;
+}
