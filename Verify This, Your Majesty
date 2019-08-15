@@ -1,0 +1,109 @@
+#include<iostream>
+#include<vector>
+
+using namespace std;
+
+
+struct xy {
+    int x;
+    int y;
+};
+
+char diagonal (vector<xy>, int, int);
+char vertical (vector<xy>, int);
+char horizontal (vector<xy>, int);
+
+
+int main () {
+    
+    int N;
+    
+    cin >> N;
+    
+    int i;
+    int x, y;
+    xy coordinate;
+    vector<xy> queen_position;
+    
+    
+    i = 0;
+    while (i < N) {
+        cin >> x >> y;
+        coordinate.x = x;
+        coordinate.y = y;
+        queen_position.push_back(coordinate);
+        i++;
+    }
+    
+    char flag;
+    flag = 'c';
+    for (int i = 0; i < queen_position.size(); i++) {
+        if (diagonal(queen_position, queen_position[i].x, queen_position[i].y) == 'I') {
+            flag = 'i';
+            break;
+        }
+        else if (horizontal(queen_position, queen_position[i].y) == 'I') {
+            flag = 'i';
+            break;
+        }
+        else if (vertical(queen_position, queen_position[i].x) == 'I') {
+            flag = 'i';
+            break;
+        }
+    }
+    
+    if (flag == 'i') {
+        cout << "INCORRECT" << endl;
+    }
+    else {
+        cout << "CORRECT" << endl;
+    }
+    
+    return 0;
+}
+
+char diagonal (vector<xy> queen_position, int x, int y) {
+    
+    int count;
+    count = 0;
+    for (int i = 0; i < queen_position.size(); i++) {
+        if (y == (x - queen_position[i].x) + queen_position[i].y or y == -(x - queen_position[i].x) + queen_position[i].y) {
+            count++;
+        }
+    }
+    
+    if (count > 1) {
+        return 'I';
+    }
+    return 'C';
+}
+
+char horizontal (vector<xy> queen_position, int y) {
+    
+    int count;
+    count = 0;
+    for (int i = 0; i < queen_position.size(); i++) {
+        if (y == queen_position[i].y) {
+            count++;
+        }
+    }
+    if (count > 1) {
+        return 'I';
+    }
+    return 'C';
+}
+
+char vertical (vector<xy> queen_position, int x) {
+    
+    int count;
+    count = 0;
+    for (int i = 0; i < queen_position.size(); i++) {
+        if (x == queen_position[i].x) {
+            count++;
+        }
+    }
+    if (count > 1) {
+        return 'I';
+    }
+    return 'C';
+}
