@@ -1,0 +1,178 @@
+#include<iostream>
+#include<vector>
+
+using namespace std;
+
+int horizontal (vector<vector<int> >, int, int);
+int vertical (vector<vector<int> >, int, int);
+int diagonal (vector<vector<int> >, int, int);
+
+int main () {
+    
+    int x, y;
+    
+    cin >> x >> y;
+    
+    vector<vector<int> > xy;
+    vector<int> r;
+    
+    int i, j, minefield;
+    
+    i = 0;
+    while (i < x) {
+        j = 0;
+        while (j < y) {
+            cin >> minefield;
+            r.push_back(minefield);
+            j++;
+        }
+        xy.push_back(r);
+        r.clear();
+        i++;
+    }
+    
+    int mine;
+    
+    for (j = 0; j < xy.size(); j++) {
+        for (i = 0; i < xy[j].size(); i++) {
+            if(xy[j][i] == 1){
+                cout << 'X';
+            }
+            else {
+                mine = horizontal(xy, j, i) + vertical(xy, j, i) + diagonal(xy, j, i);
+                if (mine == 0) {
+                    cout << '-';
+                }
+                else {
+                    cout << mine;
+                }
+            }
+        }
+        cout << endl;
+    }
+    
+    return 0;
+}
+
+int horizontal (vector<vector<int> > xy, int j, int i) {
+    int mine = 0;
+    if (xy[j].size() > 1) {
+        if (i != 0 && i != xy[j].size() - 1) {
+            if (xy[j][i - 1] == 1 && xy[j][i + 1] == 1) {
+                mine += 2;
+            }
+            else if (xy[j][i - 1] == 1 || xy[j][i + 1] == 1) {
+                mine += 1;
+            }
+        }
+        else if (i == 0) {
+            if (xy[j][i + 1] == 1) {
+                mine += 1;
+            }
+        }
+        else {
+            if (xy[j][i - 1] == 1) {
+                mine += 1;
+            }
+        }
+    }
+    return mine;
+}
+
+int vertical (vector<vector<int> > xy, int j, int i) {
+    int mine = 0;
+    if (xy.size() > 1) {
+        if (j != 0 && j != xy.size() - 1) {
+            if (xy[j - 1][i] == 1 && xy[j + 1][i] == 1) {
+                mine += 2;
+            }
+            else if (xy[j - 1][i] == 1 || xy[j + 1][i] == 1) {
+                mine += 1;
+            }
+        }
+        else if (j == 0) {
+            if (xy[j + 1][i] == 1) {
+                mine += 1;
+            }
+        }
+        else {
+            if (xy[j - 1][i] == 1) {
+                mine += 1;
+            }
+        }
+    }
+    return mine;
+}
+
+int diagonal (vector<vector<int> > xy, int j, int i) {
+    int mine = 0;
+    if (xy.size() > 1 && xy[j].size() > 1) {
+        if (i != 0 && i != xy[j].size() - 1 && j != 0 && j != xy.size() - 1) {
+            if (xy[j + 1][i + 1] == 1) {
+                mine += 1;
+            }
+            if (xy[j - 1][i - 1] == 1) {
+                mine += 1;
+            }
+            if (xy[j + 1][i - 1] == 1) {
+                mine += 1;
+            }
+            if (xy[j - 1][i + 1] == 1) {
+                mine += 1;
+            }
+        }
+        else if (i == 0 && j != 0 && j != xy.size() - 1) {
+            if (xy[j + 1][i + 1] == 1) {
+                mine += 1;
+            }
+            if (xy[j - 1][i + 1] == 1) {
+                mine += 1;
+            }
+        }
+        else if (i == xy[j].size() - 1&& j != 0 && j != xy.size() - 1) {
+            if (xy[j + 1][i - 1] == 1) {
+                mine += 1;
+            }
+            if (xy[j - 1][i - 1] == 1) {
+                mine += 1;
+            }
+        }
+        else if (i != 0 && i != xy[j].size() - 1 && j == 0) {
+            if (xy[j + 1][i + 1] == 1) {
+                mine += 1;
+            }
+            if (xy[j + 1][i - 1] == 1) {
+                mine += 1;
+            }
+        }
+        else if (i != 0 && i != xy[j].size() - 1 && j == xy.size() - 1) {
+            if (xy[j - 1][i + 1] == 1) {
+                mine += 1;
+            }
+            if (xy[j - 1][i - 1] == 1) {
+                mine += 1;
+            }
+        }
+        else if (i == 0 && j == 0) {
+            if (xy[j + 1][i + 1] == 1) {
+                mine += 1;
+            }
+        }
+        else if (i == xy[j].size() - 1 && j == xy.size() - 1) {
+            if (xy[j - 1][i - 1] == 1) {
+                mine += 1;
+            }
+        }
+        else if (i == 0 && j == xy.size() - 1) {
+            if (xy[j - 1][i + 1] == 1) {
+                mine += 1;
+            }
+        }
+        else {
+            if (xy[j + 1][i - 1] == 1) {
+                mine += 1;
+            }
+        }
+    }
+    return mine;
+}
