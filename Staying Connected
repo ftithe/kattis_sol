@@ -1,0 +1,167 @@
+#include<iostream>
+#include<vector>
+
+using namespace std;
+
+class edge {
+    
+    private:
+        int vertex_1;
+        int vertex_2;
+    public:
+        void set_vertices (int v_1, int v_2) {
+            vertex_1 = v_1;
+            vertex_2 = v_2;
+        }
+    
+        int adjacent_vertex (int v_1) {
+            if (v_1 == vertex_1) {
+                return vertex_2;
+            }
+            else if (v_1 == vertex_2) {
+                return vertex_1;
+            }
+            else {
+                return v_1;
+            }
+        }
+    
+};
+
+struct equivalent_vertices {
+    
+    int vertex;
+    int equiv_vertex;
+    
+};
+
+int main () {
+    
+    int i, j, k;
+    int v, v_1, v_2;
+    int n_vertices;
+    int n_edges;
+    int n_isolated_vertices;
+    
+    cin >> n_vertices >> n_edges;
+    vector<edge> graph;
+    edge pairs;
+    
+    i = 0;
+    while (i < n_edges) {
+        
+        cin >> v_1 >> v_2;
+        pairs.set_vertices(v_1, v_2);
+        graph.push_back(pairs);
+        i++;
+        
+    }
+    
+    if (n_edges != 0) {
+        n_isolated_vertices = 0;
+        vector<equivalent_vertices> v_equiv;
+        equivalent_vertices temp_equiv;
+    
+        for (v_1 = 0; v_1 < n_vertices; v_1++){
+            for (i = 0; i < graph.size(); i++) {
+                v_2 = graph[i].adjacent_vertex(v_1);
+                if (v_2 == v_1) {
+                    if (i == graph.size() - 1) {
+                        n_isolated_vertices++;
+                    }
+                }
+                else {
+                    break;
+                }
+            }
+        }
+    
+        i = 0;
+        while ( i < n_vertices) {
+            v_1 = i;
+            v = v_1;
+            k = 0;
+            while (k < n_vertices) {
+                for (j = 0; j < graph.size(); j++) {
+                    v_2 = graph[j].adjacent_vertex(v_1);
+                    if (v_2 != v_1) {
+                        if (v_2 < v_1) {
+                            for (k = 0; k < v_equiv.size(); k++) {
+                                if (v_2 == v_equiv[k].vertex) {
+                                    v = v_equiv[k].equiv_vertex;
+                                    break;
+                                }
+                            }
+                            if (k == v_equiv.size()) {
+                                v = v_2;
+                                temp_equiv.vertex = v_1;
+                                temp_equiv.equiv_vertex = v;
+                                v_equiv.push_back(temp_equiv);
+                            }
+                            graph[j].set_vertices(v, v);
+                        }
+                        else {
+                            graph[j].set_vertices(v, v);
+                            v_1 = v_2;
+                            temp_equiv.vertex = v_2;
+                            temp_equiv.equiv_vertex = v;
+                            v_equiv.push_back(temp_equiv);
+                            k = 0;
+                            break;
+                        }
+                    }
+                }
+                if (j == graph.size()) {
+                    k = n_vertices;
+                }
+            }
+            i++;
+        }
+        
+        for (i = 0; i < v_equiv.size(); i++) {
+            for (j = 0; j < v_equiv.size(); j++) {
+                if (v_equiv[i].equiv_vertex == v_equiv[j].vertex) {
+                    if (v_equiv[i].equiv_vertex > v_equiv[j].equiv_vertex) {
+                        v_equiv[i].equiv_vertex = v_equiv[j].equiv_vertex;
+                    }
+                }
+            }
+         }
+        
+        for (i = 0; i < v_equiv.size(); i++) {
+            for (j = 0; j < v_equiv.size(); j++) {
+                if (v_equiv[i].vertex == v_equiv[j].vertex) {
+                    if (v_equiv[i].equiv_vertex > v_equiv[j].equiv_vertex) {
+                        v = v_equiv[i].equiv_vertex;
+                        for (k = 0; k < v_equiv.size(); k++) {
+                            if (v == v_equiv[k].equiv_vertex) {
+                                v_equiv[k].equiv_vertex = v_equiv[j].equiv_vertex;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        i = 1;
+        k = 0;
+        while ( k < v_equiv.size()) {
+            for (j = k + 1; j < v_equiv.size(); j++) {
+                if (v_equiv[k].equiv_vertex != v_equiv[j].equiv_vertex) {
+                    i++;
+                    k = j;
+                    break;
+                }
+            }
+            if (j == v_equiv.size()) {
+                k++;
+            }
+        }
+        cout << i + n_isolated_vertices << endl;
+    }
+    else {
+        cout << n_vertices << endl;
+    }
+    
+    return 0;
+}
