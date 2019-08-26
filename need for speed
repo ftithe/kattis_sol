@@ -54,7 +54,7 @@ vector<int> operator - (vector<int> poly_r, vector<int> poly_l) {
 
 vector<int> polynomial_coefficents (int, vector<segment>);
 void polynomial_reduce (vector<int> &);
-long double solve (vector<int>);
+long double solve_newton (vector<int>, long double);
 long double f (long double, vector<int>);
 long double f_prime (long double, vector<int>);
 bool check_answer (long double, vector<segment>);
@@ -96,9 +96,16 @@ int main () {
     
     long double const_shift;
     
+    long double initial_guess;
+    
+    initial_guess = journey[0].speedometer_reading;
+    for (i = 0; i < journey.size(); i++)
+        if (initial_guess > journey[i].speedometer_reading)
+            initial_guess = journey[i].speedometer_reading;
+    
     do {
         
-        const_shift = solve(polynomial);
+        const_shift = solve_newton(polynomial, -initial_guess);
         
     } while (!check_answer(const_shift, journey));
     
@@ -151,7 +158,7 @@ void polynomial_reduce (vector<int> &poly) {
     
 }
 
-long double solve (vector<int> poly) {
+long double solve_newton (vector<int> poly, long double guess) {
     
     if (poly.size() == 1)
         return 0.;
@@ -159,32 +166,18 @@ long double solve (vector<int> poly) {
     srand(time(0));
     
     long double c, c_r, c_l;
-    long double tolerance = 0.0000000001;
+    long double tolerance = 0.000001;
     
-    int p;
-    
-    p = rand () % 10 + 1;
-    
-    if (p <= 5) {
-        c_l = -rand();
-    }
-    else {
-        c_l = rand();
-    }
+    c_l = rand() % 1000 + guess + 1;
     
     do {
         while (abs(f_prime(c_l, poly)) <= tolerance) {
+            
             if (abs(f(c_l, poly)) <= tolerance)
                 return c_l;
             
-            p = rand () % 10 + 1;
+            c_l = rand() + guess + 1;
             
-            if (p <= 5) {
-                c_l = -rand();
-            }
-            else {
-                c_l = rand();
-            }
         }
         
         c = f(c_l, poly) / f_prime(c_l, poly);
