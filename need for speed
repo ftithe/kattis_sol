@@ -163,6 +163,9 @@ long double solve_newton (vector<int> poly, long double guess) {
     if (poly.size() == 1)
         return 0.;
     
+    if (poly.size() == 2)
+        return -poly[0];
+    
     srand(time(0));
     
     long double c, c_r, c_l;
