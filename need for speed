@@ -7,20 +7,20 @@
 using namespace std;
 
 struct segment {
-    int distance_in_miles;
-    int speedometer_reading;
+    long double distance_in_miles;
+    long double speedometer_reading;
     
     segment () : distance_in_miles (0), speedometer_reading (0) {
     }
-    void get_data (int distance, int speed) {
+    void get_data (long double distance, long double speed) {
         distance_in_miles = distance;
         speedometer_reading = speed;
     }
 };
 
-vector<int> operator * (int cons, vector<int> poly) {
+vector<long double> operator * (long double cons, vector<long double> poly) {
     
-    vector<int> polynomial;
+    vector<long double> polynomial;
     
     for (int i = 0; i < poly.size(); i++)
         polynomial.push_back(cons * poly[i]);
@@ -29,9 +29,9 @@ vector<int> operator * (int cons, vector<int> poly) {
     
 }
 
-vector<int> operator + (vector<int> poly_r, vector<int> poly_l) {
+vector<long double> operator + (vector<long double> poly_r, vector<long double> poly_l) {
     
-    vector<int> poly;
+    vector<long double> poly;
     
     for (int i = 0; i < poly_r.size(); i++)
         poly.push_back(poly_r[i] + poly_l[i]);
@@ -39,9 +39,9 @@ vector<int> operator + (vector<int> poly_r, vector<int> poly_l) {
     return poly;
 }
 
-vector<int> operator - (vector<int> poly_r, vector<int> poly_l) {
+vector<long double> operator - (vector<long double> poly_r, vector<long double> poly_l) {
     
-    vector<int> poly;
+    vector<long double> poly;
     
     poly = poly_r;
     
@@ -52,11 +52,10 @@ vector<int> operator - (vector<int> poly_r, vector<int> poly_l) {
     
 }
 
-vector<int> polynomial_coefficents (int, vector<segment>);
-void polynomial_reduce (vector<int> &);
-long double solve_newton (vector<int>, long double);
-long double f (long double, vector<int>);
-long double f_prime (long double, vector<int>);
+vector<long double> polynomial_coefficents (int, vector<segment>);
+long double solve_newton (vector<long double>, long double, long double);
+long double f (long double, vector<long double>);
+long double f_prime (long double, vector<long double>);
 bool check_answer (long double, vector<segment>);
 
 int main () {
@@ -69,7 +68,7 @@ int main () {
     
     vector<segment> journey;
     segment journey_i;
-    int distance, speed;
+    long double distance, speed;
     
     i = 0;
     while (i < number_of_sections) {
@@ -79,20 +78,18 @@ int main () {
         i++;
     }
     
-    vector<int> polynomial_l(number_of_sections + 1);
+    vector<long double> polynomial_l(number_of_sections + 1);
     
     polynomial_l = total_time * polynomial_coefficents (-1, journey);
     
-    vector<int> polynomial_r(number_of_sections);
+    vector<long double> polynomial_r(number_of_sections);
     
     for (i = 0; i < journey.size(); i++)
         polynomial_r = polynomial_r + journey[i].distance_in_miles * polynomial_coefficents(i, journey);
     
-    vector<int> polynomial(number_of_sections + 1);
+    vector<long double> polynomial(number_of_sections + 1);
     
     polynomial = polynomial_l - polynomial_r;
-    
-    polynomial_reduce(polynomial);
     
     long double const_shift;
     
@@ -103,9 +100,16 @@ int main () {
         if (initial_guess > journey[i].speedometer_reading)
             initial_guess = journey[i].speedometer_reading;
     
+    long double max_distance;
+    
+    max_distance = journey[0].distance_in_miles;
+    for (i = 0; i < journey.size(); i++)
+        if (max_distance < journey[i].distance_in_miles)
+            max_distance = journey[i].distance_in_miles;
+    
     do {
         
-        const_shift = solve_newton(polynomial, -initial_guess);
+        const_shift = solve_newton(polynomial, -initial_guess, max_distance);
         
     } while (!check_answer(const_shift, journey));
     
@@ -114,10 +118,10 @@ int main () {
     return 0;
 }
 
-vector<int> polynomial_coefficents (int index, vector<segment> journey) {
+vector<long double> polynomial_coefficents (int index, vector<segment> journey) {
     
     vector<segment> section;
-    vector<int> polynomial(journey.size());
+    vector<long double> polynomial(journey.size());
     
     if (index == -1) {
         polynomial.push_back(0);
@@ -147,24 +151,13 @@ vector<int> polynomial_coefficents (int index, vector<segment> journey) {
     
 }
 
-void polynomial_reduce (vector<int> &poly) {
-    
-    if (poly.size() > 1) {
-        if (poly[0] == 0) {
-            poly.erase(poly.begin());
-            polynomial_reduce (poly);
-        }
-    }
-    
-}
-
-long double solve_newton (vector<int> poly, long double guess) {
+long double solve_newton (vector<long double> poly, long double guess, long double distance) {
     
     if (poly.size() == 1)
         return 0.;
     
     if (poly.size() == 2)
-        return -poly[0];
+        return -poly[0] / poly[1];
     
     srand(time(0));
     
@@ -175,18 +168,13 @@ long double solve_newton (vector<int> poly, long double guess) {
     
     do {
         while (abs(f_prime(c_l, poly)) <= tolerance) {
-            
             if (abs(f(c_l, poly)) <= tolerance)
                 return c_l;
-            
-            c_l = rand() + guess + 1;
-            
+            c_l = rand() % 1000 + guess + 1;
         }
-        
         c = f(c_l, poly) / f_prime(c_l, poly);
         c_r = c_l - c;
         c_l = c_r;
-        
     } while (abs(c) > tolerance);
     
     return c_l;
@@ -202,7 +190,7 @@ bool check_answer (long double c, vector<segment> section) {
     
 }
 
-long double f (long double c, vector<int> poly) {
+long double f (long double c, vector<long double> poly) {
     
     long double result;
     
@@ -214,7 +202,7 @@ long double f (long double c, vector<int> poly) {
     
 }
 
-long double f_prime (long double c, vector<int> poly) {
+long double f_prime (long double c, vector<long double> poly) {
     
     long double result;
     
