@@ -1,0 +1,167 @@
+#include<iostream>
+#include<vector>
+#include<cstdlib>
+#include<sstream>
+#include<algorithm>
+
+using namespace std;
+
+void play_down (vector<vector<int> > &);
+void play_up (vector<vector<int> > &);
+void play_left (vector<vector<int> > &);
+void play_right (vector<vector<int> > &);
+
+int main () {
+    
+    vector<vector<int> > tile;
+    vector<int> row;
+    
+    string line;
+    
+    while (true) {
+        getline(cin, line);
+        if (line.empty())
+            break;
+        stringstream str_st(line);
+        while (getline(str_st, line, ' ')) {
+            row.push_back(atoi(line.c_str()));
+        }
+        tile.push_back(row);
+        row.clear();
+    }
+    
+    if (tile[4][0] == 0) {
+        play_left(tile);
+    }
+    else if (tile[4][0] == 1) {
+        play_up(tile);
+    }
+    else if (tile[4][0] == 2) {
+        play_right(tile);
+    }
+    else {
+        play_down(tile);
+    }
+    
+    
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            cout << tile[i][j] << ' ';
+        }
+        cout<< endl;
+    }
+    
+    return 0;
+    
+}
+
+void play_right (vector<vector<int> > &tile) {
+    
+    vector<int> merge_res;
+    
+    for (int i = 3; i > -1; i--) {
+        for (int j = 3; j > 0; j--) {
+            for (int k = j - 1; k < 3; k++) {
+                if (tile[i][k + 1] == 0) {
+                    tile[i][k + 1] = tile[i][k];
+                    tile[i][k] = 0;
+                }
+                else if (tile[i][k + 1] == tile[i][k]) {
+                    if (find(merge_res.begin(), merge_res.end(), tile[i][k]) == merge_res.end()) {
+                        tile[i][k + 1] = 2 * tile[i][k];
+                        tile[i][k] = 0;
+                        merge_res.push_back(tile[i][k + 1]);
+                    }
+                }
+                else {
+                    break;
+                }
+            }
+        }
+        merge_res.clear();
+    }
+}
+
+void play_down (vector<vector<int> > &tile) {
+    
+    vector<int> merge_res;
+    
+    for (int j = 3; j > -1; j--) {
+        for (int i = 3; i > 0; i--) {
+            for (int k = i - 1; k < 3; k++) {
+                if (tile[k + 1][j] == 0) {
+                    tile[k + 1][j] = tile[k][j];
+                    tile[k][j] = 0;
+                }
+                else if (tile[k + 1][j] == tile[k][j]) {
+                    if (find(merge_res.begin(), merge_res.end(), tile[k][j]) == merge_res.end()) {
+                        tile[k + 1][j] = 2 * tile[k][j];
+                        tile[k][j] = 0;
+                        merge_res.push_back(tile[k + 1][j]);
+                    }
+                }
+                else {
+                    break;
+                }
+            }
+        }
+        merge_res.clear();
+    }
+    
+}
+
+void play_up (vector<vector<int> > &tile) {
+    
+    vector<int> merge_res;
+    
+    for (int j = 0; j < 4; j++) {
+        for (int i = 0; i < 3; i++) {
+            for (int k = i + 1; k > 0; k--) {
+                if (tile[k - 1][j] == 0) {
+                    tile[k - 1][j] = tile[k][j];
+                    tile[k][j] = 0;
+                }
+                else if (tile[k - 1][j] == tile[k][j]) {
+                    if (find(merge_res.begin(), merge_res.end(), tile[k][j]) == merge_res.end()) {
+                        tile[k - 1][j] = 2 * tile[k][j];
+                        tile[k][j] = 0;
+                        merge_res.push_back(tile[k - 1][j]);
+                    }
+                }
+                else {
+                    break;
+                }
+            }
+        }
+        merge_res.clear();
+    }
+    
+}
+
+void play_left (vector<vector<int> > &tile) {
+    
+    vector<int> merge_res;
+    
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 3; j++) {
+            for (int k = j + 1; k > 0; k--) {
+                if (tile[i][k - 1] == 0) {
+                    tile[i][k - 1] = tile[i][k];
+                    tile[i][k] = 0;
+                }
+                else if (tile[i][k - 1] == tile[i][k]) {
+                    if (find(merge_res.begin(), merge_res.end(), tile[i][k]) == merge_res.end()) {
+                        tile[i][k - 1] = 2 * tile[i][k];
+                        tile[i][k] = 0;
+                        merge_res.push_back(tile[i][k - 1]);
+                    }
+                }
+                else {
+                    break;
+                }
+            }
+        }
+        merge_res.clear();
+    }
+    
+}
